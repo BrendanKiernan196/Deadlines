@@ -8,6 +8,8 @@ public class EventType {
         this.name = name;
     }
 
+    EventType(EventType e){ name = e.getName();}
+
     public String getName(){
         return name;
     }

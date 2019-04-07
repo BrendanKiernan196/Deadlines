@@ -69,6 +69,12 @@ public class Event {
         this.minutes = minutes;
     }
 
+    //Information String for RecyclerView
+    public String getInfo(){
+        return title + "\t" + type.getName() + "\t" + month + "/" + day + "/" + year + "\t" +
+                hours + ":" + minutes / 10 + "" + minutes % 10;
+    }
+
     //Getters and Setters
 
     public String getTitle() {

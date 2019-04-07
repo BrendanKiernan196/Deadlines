@@ -24,6 +24,14 @@ public class EventTypeBag implements Serializable {
         this.typeList = e.getTypeList();
     }
 
+    EventTypeBag(EventBag e){
+
+        typeList = new ArrayList<EventType>();
+        typeList.add(new EventType("Unclassified"));
+        eventBag = e;
+
+    }
+
     EventTypeBag(EventTypeBag e, EventBag eventBag){
         this.typeList = e.getTypeList();
         this.eventBag = eventBag;
@@ -43,6 +51,20 @@ public class EventTypeBag implements Serializable {
         }
         typeList.add(new EventType(s));
         return true;
+    }
+
+    //Get EventType by index
+    public EventType getType(int i){
+        if(i < typeList.size()) return new EventType(typeList.get(i));
+        return null;
+    }
+
+    //Get EventType by name
+    public EventType getType(String name){
+        for(int i = 0; i < typeList.size(); i++){
+            if(typeList.get(i).getName().equalsIgnoreCase(name)) return new EventType(typeList.get(i));
+        }
+        return null;
     }
 
     //Change the title of a type
@@ -81,7 +103,7 @@ public class EventTypeBag implements Serializable {
         s = s.trim();
         for(int i = 1; i < typeList.size(); i++){
             if(s.equalsIgnoreCase(typeList.get(i).getName())){
-                eventBag.replaceType(typeList.remove(i), typeList.get(0));
+                eventBag.replaceType(typeList.remove(i).getName(), typeList.get(0));
                 return true;
             }
         }
@@ -100,6 +122,11 @@ public class EventTypeBag implements Serializable {
     //typeList soft-copy setter
     public void setTypeList(ArrayList<EventType> list){
         typeList = list;
+    }
+
+    //Get list size
+    public int getListSize(){
+        return typeList.size();
     }
 
 }

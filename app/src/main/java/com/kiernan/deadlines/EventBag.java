@@ -77,9 +77,11 @@ public class EventBag implements Serializable {
 
     //For EventTypeBag use
     //Replaces all instances of a removed EventType with the default
-    public void replaceType(EventType removed, EventType unclassified){
-        for(int i = 0; i < eventList.size(); i++){
-            if(eventList.get(i).getType() == removed) eventList.get(i).setType(unclassified);
+    public void replaceType(String removed, EventType unclassified){
+        for(int i = 0; i < eventList.size(); i++) {
+            if (eventList.get(i).getType().getName().equalsIgnoreCase(removed)) {
+                eventList.get(i).setType(unclassified);
+            }
         }
     }
 
