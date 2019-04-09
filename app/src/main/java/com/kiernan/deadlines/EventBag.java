@@ -8,17 +8,29 @@ public class EventBag implements Serializable {
     //List of events to be completed or failed
     private ArrayList<Event> eventList;
 
+    //List of completed & failed events
+    //Event boolean completed = 1 for completed or 0 for failed
+    private ArrayList<Event> pastEventList;
+
     //Constructor for initial setup
     EventBag(){
+
         eventList = new ArrayList<Event>();
+        pastEventList = new ArrayList<Event>();
+
     }
 
     EventBag(EventBag e){
+
         eventList = e.getList();
+        pastEventList = e.getPastList();
+
     }
 
-    EventBag(ArrayList<Event> eventList){
+    EventBag(ArrayList<Event> eventList, ArrayList<Event> pastEventList){
         this.eventList = eventList;
+        this.pastEventList = pastEventList;
+
     }
 
     //Add event
@@ -61,14 +73,15 @@ public class EventBag implements Serializable {
         return null;
     }
 
-    //Get Event by index
+    //Get Event by index - Hard Copy
     public Event getEvent(int i){
         if(i < eventList.size()) return new Event(eventList.get(i));
         return null;
     }
 
-    //Get Event by title
+    //Get Event by title - Hard Copy
     public Event getEvent(String title){
+        title = title.trim();
         for(int i = 0; i < eventList.size(); i++){
             if(eventList.get(i).getTitle().equalsIgnoreCase(title)) return new Event(eventList.get(i));
         }
@@ -99,9 +112,62 @@ public class EventBag implements Serializable {
         eventList = list;
     }
 
+    //Mark an event as completed - index passed
+    public void complete(int i){
+        eventList.get(i).complete();
+        pastEventList.add(eventList.remove(i));
+    }
+
+    //Mark an event as completed - title passed
+    public void complete(String title){
+        title = title.trim();
+        for(int i = 0; i < eventList.size(); i++){
+            if(eventList.get(i).getTitle().equalsIgnoreCase(title)) {
+                eventList.get(i).complete();
+                pastEventList.add(eventList.remove(i));
+                break;
+            }
+        }
+    }
+
+    //Mark an event as failed - index passed
+    public void fail(int i){
+        pastEventList.add(eventList.remove(i));
+    }
+
+    //Mark an event as failed - title passed
+    public void fail(String title){
+        title = title.trim();
+        for(int i = 0; i < eventList.size(); i++){
+            if(eventList.get(i).getTitle().equalsIgnoreCase(title)) {
+                pastEventList.add(eventList.remove(i));
+                break;
+            }
+        }
+    }
+
     //Get list size
     public int getListSize(){
         return eventList.size();
+    }
+
+    //Completed list getter - hard copy
+    public ArrayList<Event> getPastList(){
+        ArrayList<Event> copy = new ArrayList<Event>();
+        for(int i = 0; i < pastEventList.size(); i++){
+            copy.add(new Event(pastEventList.get(i)));
+        }
+        return copy;
+    }
+
+    //Past list setter - soft copy
+    public void setPastList(ArrayList<Event> list){
+        pastEventList = list;
+    }
+
+    //Get past list size
+    public int getPastListSize(){
+        return pastEventList.size();
     }
 
 }

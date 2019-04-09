@@ -53,16 +53,16 @@ public class EventTypeBag implements Serializable {
         return true;
     }
 
-    //Get EventType by index
+    //Get EventType by index - Soft Copy
     public EventType getType(int i){
-        if(i < typeList.size()) return new EventType(typeList.get(i));
+        if(i < typeList.size()) return typeList.get(i);
         return null;
     }
 
-    //Get EventType by name
+    //Get EventType by name - Soft Copy
     public EventType getType(String name){
         for(int i = 0; i < typeList.size(); i++){
-            if(typeList.get(i).getName().equalsIgnoreCase(name)) return new EventType(typeList.get(i));
+            if(typeList.get(i).getName().equalsIgnoreCase(name)) return typeList.get(i);
         }
         return null;
     }
@@ -97,7 +97,7 @@ public class EventTypeBag implements Serializable {
 
     }
 
-    //Remove EventType based on name
+    //Remove EventType based on name in EventTypeBag and corresponding EventBag
     //Return true if EventType was found and removed
     public boolean remove(String s){
         s = s.trim();

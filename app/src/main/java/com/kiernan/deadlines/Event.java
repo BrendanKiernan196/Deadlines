@@ -75,6 +75,11 @@ public class Event {
                 hours + ":" + minutes / 10 + "" + minutes % 10;
     }
 
+    //Mark this event as completed
+    public void complete(){
+        completed = true;
+    }
+
     //Getters and Setters
 
     public String getTitle() {
