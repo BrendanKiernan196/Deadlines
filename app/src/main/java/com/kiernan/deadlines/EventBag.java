@@ -1,5 +1,14 @@
 package com.kiernan.deadlines;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -168,6 +177,61 @@ public class EventBag implements Serializable {
     //Get past list size
     public int getPastListSize(){
         return pastEventList.size();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static ArrayList loadData(int signal) {
+        ArrayList toLoad = new ArrayList<>();
+
+        try {
+            FileInputStream fis;
+
+            if(signal == 0)
+                fis = new FileInputStream("event.dat");
+            else
+                fis = new FileInputStream("past_event.dat");
+
+            try (ObjectInputStream ois = new ObjectInputStream(fis)) {
+                toLoad = (ArrayList)ois.readObject();
+            } catch (ClassNotFoundException ex) {
+                System.out.println("LOAD: " + ex.getMessage());
+            }
+            fis.close();
+        } catch (IOException ex) {
+            System.out.println("LOAD: " + ex.getMessage());
+        }
+        return toLoad;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static void saveData(ArrayList<Event> toSave, int signal) {
+        try {
+            FileOutputStream fos;
+            if(signal == 0)
+                fos = new FileOutputStream("event.dat");
+            else
+                fos = new FileOutputStream("past_event.dat");
+            try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                oos.writeObject(toSave);
+            }
+            fos.close();
+        } catch (IOException ex) {
+            System.out.println("SAVE: " + ex.getMessage());
+        }
+    }
+
+    public static void deleteData(int signal) {
+        File file;
+
+        if(signal == 0)
+            file = new File("event.dat");
+        else
+            file = new File("past_event.dat");
+
+        if(file.delete())
+            System.out.println("File deleted successfully.");
+        else
+            System.out.println("File deletion failed.");
     }
 
 }

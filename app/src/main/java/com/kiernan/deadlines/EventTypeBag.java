@@ -1,5 +1,15 @@
 package com.kiernan.deadlines;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -127,6 +137,48 @@ public class EventTypeBag implements Serializable {
     //Get list size
     public int getListSize(){
         return typeList.size();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static ArrayList loadData() {
+        ArrayList toLoad = new ArrayList<>();
+
+        try {
+            FileInputStream fis =
+                    new FileInputStream("type.dat");
+            try (ObjectInputStream ois = new ObjectInputStream(fis)) {
+                toLoad = (ArrayList)ois.readObject();
+            } catch (ClassNotFoundException ex) {
+                System.out.println("LOAD: " + ex.getMessage());
+            }
+            fis.close();
+        } catch (IOException ex) {
+            System.out.println("LOAD: " + ex.getMessage());
+        }
+        return toLoad;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static void saveData(ArrayList<EventType> toSave) {
+        try {
+            FileOutputStream fos;
+            fos = new FileOutputStream("type.dat");
+            try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                oos.writeObject(toSave);
+            }
+            fos.close();
+        } catch (IOException ex) {
+            System.out.println("SAVE: " + ex.getMessage());
+        }
+    }
+
+    public static void deleteData() {
+        File file = new File("type.dat");
+
+        if(file.delete())
+            System.out.println("File deleted successfully.");
+        else
+            System.out.println("File deletion failed.");
     }
 
 }
