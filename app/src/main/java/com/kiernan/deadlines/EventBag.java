@@ -179,6 +179,8 @@ public class EventBag implements Serializable {
         return pastEventList.size();
     }
 
+    //Loads the ArrayList from a file. Pass 0 for current events, not 0 for past events.
+    //NOTE: IOException includes FileNotFoundException, so a non-existent file shouldn't break shit.
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static ArrayList loadData(int signal) {
         ArrayList toLoad = new ArrayList<>();
@@ -203,6 +205,7 @@ public class EventBag implements Serializable {
         return toLoad;
     }
 
+    //Saves the ArrayList to a file. Pass 0 for current events, not 0 for past events.
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void saveData(ArrayList<Event> toSave, int signal) {
         try {
@@ -220,6 +223,7 @@ public class EventBag implements Serializable {
         }
     }
 
+    //Deletes the file from the Android file system. Pass 0 for current events, not 0 for past events.
     public static void deleteData(int signal) {
         File file;
 

@@ -139,6 +139,8 @@ public class EventTypeBag implements Serializable {
         return typeList.size();
     }
 
+    //Loads the ArrayList from a file.
+    //NOTE: IOException includes FileNotFoundException, so a non-existent file shouldn't break shit.
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static ArrayList loadData() {
         ArrayList toLoad = new ArrayList<>();
@@ -158,6 +160,7 @@ public class EventTypeBag implements Serializable {
         return toLoad;
     }
 
+    //Saves the ArrayList to a file
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void saveData(ArrayList<EventType> toSave) {
         try {
@@ -172,6 +175,7 @@ public class EventTypeBag implements Serializable {
         }
     }
 
+    //Deletes the file from the Android file system
     public static void deleteData() {
         File file = new File("type.dat");
 
