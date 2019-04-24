@@ -144,7 +144,7 @@ public class EventTypeBag implements Serializable {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static ArrayList loadData() {
         ArrayList toLoad = new ArrayList<>();
-
+        toLoad.add(new EventType("Unclassified"));
         try {
             FileInputStream fis =
                     new FileInputStream("type.dat");
