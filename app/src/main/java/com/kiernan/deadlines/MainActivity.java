@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 /*
     Deadlines Project - Members
@@ -30,8 +31,12 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
 
-    private AlertDialog newEventType, eventTypeFail,
+    private AlertDialog newEvent, newEventType, eventTypeFail,
             confirm, ceAlert, cetAlert, caAlert;
+
+    private RelativeLayout eventCreator;
+
+    private EditText eventTypeCreator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
 
         loadBags();
+        makeViews();
         makeDialogue();
         makeHamburger();
     }
@@ -68,6 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
         eventTypeBag = new EventTypeBag(eventBag);
         //eventTypeBag.setTypeList(eventTypeBag.loadData());
+    }
+
+    public void makeViews(){
+        eventCreator = ((RelativeLayout) getLayoutInflater().inflate(R.layout.event_creator, null));
+        eventTypeCreator = ((EditText) getLayoutInflater().inflate(R.layout.event_type_creator, null));
     }
 
     public void makeDialogue(){
@@ -92,11 +103,11 @@ public class MainActivity extends AppCompatActivity {
                 newEventType.show();
             }
         });
-        builder.setMessage("An event type by this name exists.  Please try again.");
+        builder.setMessage("");
         eventTypeFail = builder.create();
 
         /*
-        Clear Event Confirmation
+        Clear All Events Confirmation
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -113,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         ceAlert = builder.create();
 
         /*
-        Clear Event Type Confirmation
+        Clear All Event Types Confirmation
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -130,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         cetAlert = builder.create();
 
         /*
-        Clear Event & Event Type Confirmation
+        Clear All Events & Event Types Confirmation
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -148,18 +159,32 @@ public class MainActivity extends AppCompatActivity {
         caAlert = builder.create();
 
         /*
-        Add New Event Dialogue
+        Add New Event Type Dialogue
          */
         builder.setMessage("Enter New Event Type:");
-        builder.setView(getLayoutInflater().inflate(R.layout.event_type_creator, null));
+        builder.setView(eventTypeCreator);
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                EditText et = findViewById(R.id.eventTypeCreator);
-                String s = et.getText().toString();
-                if(s != null && eventTypeBag.add(s)){
-                    confirm.show();
+                String s = eventTypeCreator.getText().toString().trim();
+                if(s != null){
+                    if(s.isEmpty() == false){
+                        if(eventTypeBag.add(s)) {
+                            //for(int i = 0; i < eventTypeBag.getListSize(); i++)System.out.println(eventTypeBag.getType(i).getName());
+                            eventTypeCreator.setText("");
+                            confirm.show();
+                        }
+                        else{
+                            eventTypeFail.setMessage("The type you entered already exists.");
+                            eventTypeFail.show();
+                        }
+                    }
+                    else{
+                        eventTypeFail.setMessage("Please enter a valid name");
+                        eventTypeFail.show();
+                    }
                 }
                 else{
+                    eventTypeFail.setMessage("The input string could not be accessed. Please try again");
                     eventTypeFail.show();
                 }
             }
@@ -170,6 +195,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         newEventType = builder.create();
+
+        /*
+        Add new event dialogue
+         */
+        builder.setMessage("Enter New Event Type:");
+        builder.setView(eventCreator);
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                //To be added
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Close
+            }
+        });
+        newEvent = builder.create();
+
     }
 
     public void makeHamburger() {
@@ -181,7 +226,10 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
 
-                        if (menuItem.getTitle().equals("Add Event Type")) {
+                        if (menuItem.getTitle().equals("Add Event")) {
+                            newEvent.show();
+                        }
+                        else if (menuItem.getTitle().equals("Add Event Type")) {
                             newEventType.show();
                         }
                         else if (menuItem.getTitle().equals("Clear Events")) {
