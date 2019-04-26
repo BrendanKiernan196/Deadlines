@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
+
 /*
     Deadlines Project - Members
     (Insert last names if you wish)
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //add clear eventBag method
+                eventBag.setList(new ArrayList<Event>());
                 confirm.show();
             }
         });
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //add clear eventTypeBag method w/ update to eventBag
+                eventTypeBag.clearAndUpdate();
                 confirm.show();
             }
         });
@@ -145,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //add clear eventBag method
-                //add clear eventTypeBag method
+                eventBag.setList(new ArrayList<Event>());
+                eventTypeBag.clear();
                 confirm.show();
             }
         });

@@ -116,9 +116,26 @@ public class EventBag implements Serializable {
         return copy;
     }
 
+    //List getter - names of events
+    //This class is meant to be used for appropriate spinners
+    public ArrayList<String> getNames(){
+        ArrayList<String> names = new ArrayList<String>();
+        for(int i = 0; i < eventList.size(); i++){
+            names.add(eventList.get(i).getTitle());
+        }
+        return names;
+    }
+
     //List setter - soft copy
     public void setList(ArrayList<Event> list){
         eventList = list;
+    }
+
+    //Reset types of events after the type bag was reset
+    public void clearTypes(EventType unclassified){
+        for(int i = 0; i < pastEventList.size(); i++){
+            eventList.get(i).setType(unclassified);
+        }
     }
 
     //Mark an event as completed - index passed

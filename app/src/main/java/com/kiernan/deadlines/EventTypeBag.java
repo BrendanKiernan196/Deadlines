@@ -22,18 +22,6 @@ public class EventTypeBag implements Serializable {
     //A reference to the EventBag for functions such as Remove
     private EventBag eventBag;
 
-    //Constructor for the initial creation of the bag
-    EventTypeBag(){
-
-        typeList = new ArrayList<EventType>();
-        typeList.add(new EventType("Unclassified"));
-
-    }
-
-    EventTypeBag(EventTypeBag e){
-        this.typeList = e.getTypeList();
-    }
-
     EventTypeBag(EventBag e){
 
         typeList = new ArrayList<EventType>();
@@ -120,6 +108,21 @@ public class EventTypeBag implements Serializable {
         return false;
     }
 
+    //Clears the bag and updates the event bag accordingly
+    //Method to be invoked during the clear event type list method
+    public void clearAndUpdate(){
+        typeList = new ArrayList<EventType>();
+        typeList.add(new EventType("Unclassified"));
+        eventBag.clearTypes(typeList.get(0));
+    }
+
+    //Clear the bag but keep the unclassified type
+    //A NEW ARRAYLIST WITHOUT THE UNCLASSIFIED TYPE SHOULD NEVER OCCUR
+    public void clear(){
+        typeList = new ArrayList<EventType>();
+        typeList.add(new EventType("Unclassified"));
+    }
+
     //typeList hard-copy getter
     public ArrayList<EventType> getTypeList(){
         ArrayList<EventType> copy = new ArrayList<EventType>();
@@ -127,6 +130,16 @@ public class EventTypeBag implements Serializable {
             copy.add(typeList.get(i));
         }
         return copy;
+    }
+
+    //List getter - names of events
+    //This class is meant to be used for appropriate spinners
+    public ArrayList<String> getNames(){
+        ArrayList<String> names = new ArrayList<String>();
+        for(int i = 0; i < typeList.size(); i++){
+            names.add(typeList.get(i).getName());
+        }
+        return names;
     }
 
     //typeList soft-copy setter
