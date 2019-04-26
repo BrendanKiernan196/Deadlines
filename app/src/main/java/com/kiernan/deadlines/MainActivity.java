@@ -1,13 +1,16 @@
 package com.kiernan.deadlines;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -31,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private EventBag eventBag;
     private EventTypeBag eventTypeBag;
 
+    RecyclerView eventRecycler;
+    private EventAdapter eventAdapter;
+
     private DrawerLayout drawerLayout;
 
     private AlertDialog newEvent, newEventType, eventTypeFail,
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setHomeAsUpIndicator(R.drawable.hamburger_icon);
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        eventRecycler = findViewById(R.id.eventRecycler);
 
         loadBags();
         makeViews();
@@ -81,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     public void makeViews(){
         eventCreator = ((RelativeLayout) getLayoutInflater().inflate(R.layout.event_creator, null));
         eventTypeCreator = ((EditText) getLayoutInflater().inflate(R.layout.event_type_creator, null));
+        prepRecyclerView();
     }
 
     public void makeDialogue(){
@@ -254,5 +262,21 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    //Spins up the EventAdapter class and passes the EventBag ArrayList
+    //Commented out so it doesn't break shit inadvertently due to EventBag not being active
+    public void prepRecyclerView() {
+        /*
+        eventAdapter = new EventAdapter(eventBag.getList());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        eventRecycler.setLayoutManager(mLayoutManager);
+        eventRecycler.setItemAnimator(new DefaultItemAnimator());
+        eventRecycler.setAdapter(eventAdapter);
+        */
+    }
 
+    //Renders the events to screen, call this whenever a new event is added or things get sorted (maybe)
+    //Commented out so it doesn't break shit inadvertently due to EventBag not being active
+    public void renderEventsToView() {
+        //eventAdapter.notifyDataSetChanged();
+    }
 }
