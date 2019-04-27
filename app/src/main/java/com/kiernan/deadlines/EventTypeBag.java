@@ -12,15 +12,34 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/*
+Event Type List with CRUD Functionality
+
+NOTE:
+
+1. The bag must always have a reference to the current state address of the event bag.  Else,
+unfortunate glitching may occur.  This setup is intended to make allow events that are given a
+certain type to be modified as the type given is removed.
+
+2. The list must always have a reference to a type called "Unclassified."  This is the type an event
+will receive if its original type is deleted from the list.  This is so that an event never has a
+null type, which would make everything make complicated.
+ */
 public class EventTypeBag implements Serializable {
 
-    //The list of types
-    //There will be an immutable type "Unclassified" as a default type which is best left at 0
+    /*
+    The list of types
+    There will be an immutable type "Unclassified" as a default type which is best left at 0
+    */
     private ArrayList<EventType> typeList;
 
     //A reference to the EventBag for functions such as Remove
     private EventBag eventBag;
 
+    /*
+    Constructor - EventBag reference
+    This should not be null
+     */
     EventTypeBag(EventBag e){
 
         typeList = new ArrayList<EventType>();
@@ -29,18 +48,27 @@ public class EventTypeBag implements Serializable {
 
     }
 
+    /*
+    Constructor for ArrayList<EventType> - soft-copy && EventBag reference
+    @Depreciated
+     */
     EventTypeBag(EventTypeBag e, EventBag eventBag){
         this.typeList = e.getTypeList();
         this.eventBag = eventBag;
     }
 
-    //Constructor for ArrayList<EventType> - soft-copy
+    /*
+    Constructor for ArrayList<EventType> - soft-copy
+    @Depreciated
+     */
     EventTypeBag(ArrayList<EventType> list){
         typeList = list;
     }
 
-    //Add type to list from String
-    //Return true if String was unique and added
+    /*
+    Add type to list from String
+    Return true if String was unique and added
+     */
     public boolean add(String s){
         s = s.trim();
         for(int i = 0; i < typeList.size(); i++){
@@ -64,8 +92,11 @@ public class EventTypeBag implements Serializable {
         return null;
     }
 
-    //Change the title of a type
-    //Return true if String was unique and EventType was updated
+    /*
+    Change the title of a type
+    Return true if String was unique and EventType was updated
+    May include a method to replace type from index if needed
+    */
     public boolean update(String former, String newer){
 
         former = former.trim();
@@ -77,6 +108,7 @@ public class EventTypeBag implements Serializable {
         //Current EventType name being compared to former & newer
         String current;
 
+        //Ensure title new title is unique and former exists
         if(former.equalsIgnoreCase(typeList.get(0).getName()) == false){
             for(int i = 1; i < typeList.size(); i++){
                 current = typeList.get(i).getName();
@@ -85,6 +117,7 @@ public class EventTypeBag implements Serializable {
             }
         }
 
+        //Handle renaming type if conditions were met
         if(updateIndex != -1) {
             typeList.get(updateIndex).setName(newer);
             return true;
@@ -94,8 +127,11 @@ public class EventTypeBag implements Serializable {
 
     }
 
-    //Remove EventType based on name in EventTypeBag and corresponding EventBag
-    //Return true if EventType was found and removed
+    /*
+    Remove EventType based on name in EventTypeBag and update events with the former type in the
+    event bag
+    Return true if EventType was found and removed
+    */
     public boolean remove(String s){
         s = s.trim();
         for(int i = 1; i < typeList.size(); i++){
@@ -107,22 +143,27 @@ public class EventTypeBag implements Serializable {
         return false;
     }
 
-    //Clears the bag and updates the event bag accordingly
-    //Method to be invoked during the clear event type list method
+    /*
+    Clears the bag and updates the event bag accordingly
+    Method to be invoked during the clear event type list method
+    A NEW ARRAYLIST WITHOUT THE UNCLASSIFIED TYPE SHOULD NEVER OCCUR
+    */
     public void clearAndUpdate(){
         typeList = new ArrayList<EventType>();
         typeList.add(new EventType("Unclassified"));
         eventBag.clearTypes(typeList.get(0));
     }
 
-    //Clear the bag but keep the unclassified type
-    //A NEW ARRAYLIST WITHOUT THE UNCLASSIFIED TYPE SHOULD NEVER OCCUR
+    /*
+    Clear the bag but keep the unclassified type
+    A NEW ARRAYLIST WITHOUT THE UNCLASSIFIED TYPE SHOULD NEVER OCCUR
+    */
     public void clear(){
         typeList = new ArrayList<EventType>();
         typeList.add(new EventType("Unclassified"));
     }
 
-    //typeList hard-copy getter
+    //TypeList hard-copy getter
     public ArrayList<EventType> getTypeList(){
         ArrayList<EventType> copy = new ArrayList<EventType>();
         for(int i = 0; i < typeList.size(); i++){
@@ -131,8 +172,10 @@ public class EventTypeBag implements Serializable {
         return copy;
     }
 
-    //List getter - names of events
-    //This class is meant to be used for appropriate spinners
+    /*
+    List getter - names of events
+    This class is meant to be used for appropriate spinners
+    */
     public ArrayList<String> getNames(){
         ArrayList<String> names = new ArrayList<String>();
         for(int i = 0; i < typeList.size(); i++){

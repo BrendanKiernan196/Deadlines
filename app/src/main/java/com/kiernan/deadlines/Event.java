@@ -8,7 +8,7 @@ public class Event {
     //Category of events to which an event belongs
     private EventType type;
 
-    //Event deadline ints
+    //Event deadline time ints
     private int year, month, day, hours, minutes;
 
     //Supplementary

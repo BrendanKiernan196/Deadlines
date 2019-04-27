@@ -12,6 +12,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/*
+Event List with CRUD functionality
+ */
 public class EventBag implements Serializable {
 
     //List of events to be completed or failed
@@ -29,6 +32,8 @@ public class EventBag implements Serializable {
 
     }
 
+    //Constructor for EventBag passed
+    //May be depreciated due to I/O handling format
     EventBag(EventBag e){
 
         eventList = e.getList();
@@ -36,14 +41,21 @@ public class EventBag implements Serializable {
 
     }
 
+    /*
+    Constructor for EventBag passed
+    May be depreciated due to I/O handling in the main activity file
+    */
     EventBag(ArrayList<Event> eventList, ArrayList<Event> pastEventList){
         this.eventList = eventList;
         this.pastEventList = pastEventList;
 
     }
 
-    //Add event
-    //Return true if added and title was unique
+    /*
+    Add event with a unique title
+    Return true if added and title was unique
+    Redundant method
+    */
     public boolean add(Event e){
         for(int i = 0; i < eventList.size(); i++){
             if(eventList.get(i).getTitle().equalsIgnoreCase(e.getTitle())) return false;
@@ -52,8 +64,10 @@ public class EventBag implements Serializable {
         return true;
     }
 
-    //Add event from details
-    //Return true if added and title was unique
+    /*
+    Add event with all necessary details given
+    Return true if added and title was unique
+    */
     public boolean add(String title, EventType type, int year, int month, int day, int hours, int minutes){
         title = title.trim();
         for(int i = 0; i < eventList.size(); i++){
@@ -68,13 +82,19 @@ public class EventBag implements Serializable {
         eventList.get(i).update(title, type, year, month, day, hours, minutes);
     }
 
-    //Remove Event by index
+    /*
+    Remove Event by index
+    Return null if index out of bounds
+     */
     public Event remove(int i){
         if(i < eventList.size()) return eventList.remove(i);
         return null;
     }
 
-    //Remove Event by title
+    /*
+    Remove Event by title
+    Return null if title non-existent
+     */
     public Event remove(String title){
         for(int i = 0; i < eventList.size(); i++){
             if(eventList.get(i).getTitle().equalsIgnoreCase(title)) return eventList.remove(i);
@@ -82,13 +102,19 @@ public class EventBag implements Serializable {
         return null;
     }
 
-    //Get Event by index - Hard Copy
+    /*
+    Get Event by index - Hard Copy
+    Return null if index out of bounds
+     */
     public Event getEvent(int i){
         if(i < eventList.size()) return new Event(eventList.get(i));
         return null;
     }
 
-    //Get Event by title - Hard Copy
+    /*
+    Get Event by title - Hard Copy
+    Return null if title non-existent
+     */
     public Event getEvent(String title){
         title = title.trim();
         for(int i = 0; i < eventList.size(); i++){
@@ -97,8 +123,10 @@ public class EventBag implements Serializable {
         return null;
     }
 
-    //For EventTypeBag use
-    //Replaces all instances of a removed EventType with the default
+    /*
+    Replaces all instances of a removed EventType with the default "Unclassified"
+    Primarily for EventTypeBag use
+    */
     public void replaceType(String removed, EventType unclassified){
         for(int i = 0; i < eventList.size(); i++) {
             if (eventList.get(i).getType().getName().equalsIgnoreCase(removed)) {
@@ -116,8 +144,10 @@ public class EventBag implements Serializable {
         return copy;
     }
 
-    //List getter - names of events
-    //This class is meant to be used for appropriate spinners
+    /*
+    List getter - names of events
+    This class is meant to be used for selection spinners in the remove/delete event UI
+    */
     public ArrayList<String> getNames(){
         ArrayList<String> names = new ArrayList<String>();
         for(int i = 0; i < eventList.size(); i++){
@@ -131,7 +161,7 @@ public class EventBag implements Serializable {
         eventList = list;
     }
 
-    //Reset types of events after the type bag was reset
+    //Replace types of events after the type bag was reset
     public void clearTypes(EventType unclassified){
         for(int i = 0; i < pastEventList.size(); i++){
             eventList.get(i).setType(unclassified);
@@ -144,7 +174,11 @@ public class EventBag implements Serializable {
         pastEventList.add(eventList.remove(i));
     }
 
-    //Mark an event as completed - title passed
+    /*
+    Mark an event as completed - title passed
+    This method is optimized to a procedure in which the user chooses an event to complete from a
+    spinner
+     */
     public void complete(String title){
         title = title.trim();
         for(int i = 0; i < eventList.size(); i++){
@@ -184,6 +218,15 @@ public class EventBag implements Serializable {
             copy.add(new Event(pastEventList.get(i)));
         }
         return copy;
+    }
+
+    //List getter - past event names
+    public ArrayList<String> getPastNames(){
+        ArrayList<String> names = new ArrayList<String>();
+        for(int i = 0; i < pastEventList.size(); i++){
+            names.add(pastEventList.get(i).getTitle());
+        }
+        return names;
     }
 
     //Past list setter - soft copy
