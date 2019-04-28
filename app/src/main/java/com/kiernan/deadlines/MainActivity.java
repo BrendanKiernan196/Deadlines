@@ -8,19 +8,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 /*
     Deadlines Project - Members
@@ -43,15 +43,35 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
 
-    private AlertDialog newEvent, eventFail, newEventType, eventTypeFail,
-            confirm, ceAlert, cetAlert, caAlert;
+    private AlertDialog detailEvent, eventFail, detailEventType, eventTypeFail, eventSelector,
+            eventTypeSelector, confirm, ceAlert, cetAlert, caAlert, adder;
+
+    //For eventSelector and eventTypeSelector - name of event or type to be updated
+    private String reference;
+
+    //For eventSelector and eventTypeSelector - indicate if the selected object is to be deleted
+    //True - delete
+    //False - update or complete (See following bool)
+    private boolean delete;
+
+    /*
+    For eventCreator and eventTypeCreator - indicate if the information obtained is for an update
+    True - update object of name @string/reference
+    False - create new object
+
+    For eventSelect - indicate if selected event is to be updated
+    True - update object of selected name
+    False - complete (stretch goal)
+     */
+    private boolean update;
 
     private RelativeLayout eventCreator;
 
     private EditText eventTypeCreator;
 
-    //Specific purpose spinners
-    private Spinner creatorEventTypeSpinner, hourSpinner, minuteSpinner, monthSpinner, daySpinner, yearSpinner;
+    //Event Creator Spinners
+    private Spinner creatorEventTypeSpinner, hourSpinner, minuteSpinner, monthSpinner, daySpinner,
+            yearSpinner;
 
     private ArrayList hours, minutes, months, days, years;
 
@@ -74,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         makeTimeSpinners();
         makeDialogue();
         makeHamburger();
+        setAddButtonAction();
     }
 
     //Method to give hamburger menu and add buttons onClick functionality
@@ -82,10 +103,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             //Home button opens and closes hamburger menu
             case android.R.id.home:
-                if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
-                }
-                else{
+                } else {
                     drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
@@ -199,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
          */
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                newEvent.show();
+                detailEvent.show();
             }
         });
         builder.setMessage("");
@@ -210,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
          */
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                newEventType.show();
+                detailEventType.show();
             }
         });
         builder.setMessage("");
@@ -269,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
         caAlert = builder.create();
 
         /*
-        Add New Event Type Dialogue
+        Add New & Update Event Type Dialogue
          */
         builder.setMessage("Enter New Event Type:");
         builder.setView(eventTypeCreator);
@@ -301,10 +321,10 @@ public class MainActivity extends AppCompatActivity {
                 //Close
             }
         });
-        newEventType = builder.create();
+        detailEventType = builder.create();
 
         /*
-        Add new event dialogue
+        Add New & Update Event Dialogue
          */
         builder.setMessage("Enter New Event Type:");
         builder.setView(eventCreator);
@@ -318,7 +338,64 @@ public class MainActivity extends AppCompatActivity {
                 //Close
             }
         });
-        newEvent = builder.create();
+        detailEvent = builder.create();
+
+        /*
+        Add/Update/Complete event selection pop-up
+         */
+        //Get and set-up spinner for pop-up
+        final Spinner spinner = (Spinner) getLayoutInflater().inflate(R.layout.event_selector, null);
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+                eventBag.getNames());
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        //Builder must be redeclared to avoid previous pop-up attributes from overlapping
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select an event to update");
+        builder.setPositiveButton("Find", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                reference = spinner.getSelectedItem().toString();
+                detailEvent.show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Close
+            }
+        });
+        eventSelector = builder.create();
+
+        /*
+        Add/Update event type selector pop-up
+
+        final Spinner spinnerB = (Spinner) getLayoutInflater().inflate(R.layout.event_type_selector, null);
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+                eventBag.getNames());
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinnerB.setAdapter(adapter);
+        */
+
+        /*
+        Add button pop-up
+         */
+        //Builder must be redeclared to avoid previous pop-up attributes from overlapping
+        builder = new AlertDialog.Builder(this);
+        //Options of what type of new thing to add - pop-up choice
+        String[] options = {"Event", "EventType"};
+        builder.setTitle("Add New:").setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            //which = index in options
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) detailEvent.show();
+                else detailEventType.show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Close
+            }
+        });
+        adder = builder.create();
 
     }
 
@@ -329,19 +406,28 @@ public class MainActivity extends AppCompatActivity {
             if (s.isEmpty() == false) {
                 int month = Integer.parseInt(monthSpinner.getSelectedItem().toString());
                 int day = Integer.parseInt(daySpinner.getSelectedItem().toString());
-                if (dayexists(month, day)) {
-                    int year = Integer.parseInt(yearSpinner.getSelectedItem().toString());
+                int year = Integer.parseInt(yearSpinner.getSelectedItem().toString());
+                System.out.println(year);
+                if (dayExists(month, day, year)) {
                     int hour = Integer.parseInt(hourSpinner.getSelectedItem().toString());
                     int minute = Integer.parseInt(minuteSpinner.getSelectedItem().toString());
-                    GregorianCalendar gc = new GregorianCalendar(year, month, day, hour, minute);
-                    if (gc.getTimeInMillis() > Calendar.getInstance().getTimeInMillis()) {
+                    //Due to some currently unknown glitch, the paramaters must be modified to provide the correct date
+                    Date date = new Date(year - 1900, month - 1, day, hour, minute);
+                    Date now = new Date();
+
+                    System.out.println(year + " " + month + " " + day + " " + hour + " " + minute);
+                    System.out.println(date.toString());
+                    System.out.println(date.getTime());
+                    System.out.println(now.toString());
+                    System.out.println(now.getTime());
+
+                    if (date.getTime() > now.getTime()) {
+                        EventType type = eventTypeBag.getType(creatorEventTypeSpinner.getSelectedItem().toString());
                         //Insert conditional here
-                        EventType type = (EventType) creatorEventTypeSpinner.getSelectedItem();
-                        if (eventBag.add(s, type, year, month, day, hour, minute)){
+                        if (eventBag.add(s, type, year, month, day, hour, minute)) {
                             et.setText("");
                             confirm.show();
-                        }
-                        else{
+                        } else {
                             eventFail.setMessage("An object of the given objective title already exists.");
                             eventFail.show();
                         }
@@ -370,11 +456,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public boolean dayexists(int month, int day) {
+    public boolean dayExists(int month, int day, int year) {
         if (day == 31) {
-            if (month == 4 || month == 6 || month == 9 || month == 11) return false;
-        } else if (day > 28) {
-            if (month == 2) return false;
+            if (month == 2 || month == 4 || month == 6 || month == 9 || month == 11) return false;
+        } else if (month == 2) {
+            if (day > 29) return false;
+            else if (day == 29) {
+                if (year % 4 != 0) return false;
+            }
         }
         return true;
     }
@@ -389,9 +478,9 @@ public class MainActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
 
                         if (menuItem.getTitle().equals("Add Event")) {
-                            newEvent.show();
+                            detailEvent.show();
                         } else if (menuItem.getTitle().equals("Add Event Type")) {
-                            newEventType.show();
+                            detailEventType.show();
                         } else if (menuItem.getTitle().equals("Clear Events")) {
                             ceAlert.show();
                         } else if (menuItem.getTitle().equals("Clear Event Types")) {
@@ -407,6 +496,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    public void setAddButtonAction() {
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adder.show();
+            }
+        });
     }
 
     //Spins up the EventAdapter class and passes the EventBag ArrayList

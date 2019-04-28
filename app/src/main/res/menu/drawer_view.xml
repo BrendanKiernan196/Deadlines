@@ -6,12 +6,22 @@
 
         <item android:id="@+id/addEvent"
             android:title="Add Event"    />
+        <item android:id="@+id/updateEvent"
+            android:title="Update Event"    />
+        <item android:id="@+id/removeEvent"
+            android:title="Remove Event"    />
         <item android:id="@+id/addEventType"
             android:title="Add Event Type"    />
+        <item android:id="@+id/updateEventType"
+            android:title="Update Event Type"    />
+        <item android:id="@+id/removeEventType"
+            android:title="Remove Event Type"    />
         <item android:id="@+id/clearEvents"
             android:title="Clear Events"    />
         <item android:id="@+id/clearEventTypes"
             android:title="Clear Event Types"    />
+        <item android:id="@+id/clearHistory"
+            android:title="Clear History"    />
         <item android:id="@+id/clearAll"
             android:title="Clear All"    />
         <item android:id="@+id/save"
