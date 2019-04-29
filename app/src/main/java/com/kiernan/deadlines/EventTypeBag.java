@@ -109,7 +109,7 @@ public class EventTypeBag implements Serializable {
         String current;
 
         //Ensure title new title is unique and former exists
-        if(former.equalsIgnoreCase(typeList.get(0).getName()) == false){
+        if(newer.equalsIgnoreCase(typeList.get(0).getName()) == false){
             for(int i = 1; i < typeList.size(); i++){
                 current = typeList.get(i).getName();
                 if(current.equalsIgnoreCase(newer)) return false;
@@ -173,13 +173,14 @@ public class EventTypeBag implements Serializable {
     }
 
     /*
-    List getter - names of events
+    List getter - names of event types starting from a given index
     This class is meant to be used for appropriate spinners
     */
-    public ArrayList<String> getNames(){
+    public ArrayList<String> getNames(int i){
         ArrayList<String> names = new ArrayList<String>();
-        for(int i = 0; i < typeList.size(); i++){
+        while(i < typeList.size()){
             names.add(typeList.get(i).getName());
+            i++;
         }
         return names;
     }

@@ -44,24 +44,19 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
 
     private AlertDialog detailEvent, eventFail, detailEventType, eventTypeFail, eventSelector,
-            eventTypeSelector, confirm, ceAlert, cetAlert, caAlert, adder;
+            eventTypeSelector, confirm, error, ceAlert, cetAlert, chAlert, caAlert, adder;
 
     //For eventSelector and eventTypeSelector - name of event or type to be updated
     private String reference;
-
-    //For eventSelector and eventTypeSelector - indicate if the selected object is to be deleted
-    //True - delete
-    //False - update or complete (See following bool)
-    private boolean delete;
 
     /*
     For eventCreator and eventTypeCreator - indicate if the information obtained is for an update
     True - update object of name @string/reference
     False - create new object
 
-    For eventSelect - indicate if selected event is to be updated
+    For eventSelector and eventTypeSelector - indicate if selected event is to be updated
     True - update object of selected name
-    False - complete (stretch goal)
+    False - delete/complete(stretch goal)
      */
     private boolean update;
 
@@ -70,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText eventTypeCreator;
 
     //Event Creator Spinners
-    private Spinner creatorEventTypeSpinner, hourSpinner, minuteSpinner, monthSpinner, daySpinner,
-            yearSpinner;
+    private Spinner eventSpinner, eventTypeSpinner, creatorEventTypeSpinner, hourSpinner,
+            minuteSpinner, monthSpinner, daySpinner, yearSpinner;
 
     private ArrayList hours, minutes, months, days, years;
 
@@ -91,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         loadBags();
         makeViews();
+        makeEventSpinners();
         makeTimeSpinners();
         makeDialogue();
         makeHamburger();
@@ -136,15 +132,34 @@ public class MainActivity extends AppCompatActivity {
         eventCreator = ((RelativeLayout) getLayoutInflater().inflate(R.layout.event_creator, null));
         eventTypeCreator = ((EditText) getLayoutInflater().inflate(R.layout.event_type_creator, null));
 
+        eventSpinner = (Spinner) getLayoutInflater().inflate(R.layout.event_selector, null);
+        eventTypeSpinner = (Spinner) getLayoutInflater().inflate(R.layout.event_type_selector, null);
+        creatorEventTypeSpinner = (Spinner) eventCreator.getChildAt(3);
+
         prepRecyclerView();
     }
 
-    public void makeTimeSpinners() {
-        creatorEventTypeSpinner = (Spinner) eventCreator.getChildAt(3);
-        ArrayList<String> options = eventTypeBag.getNames();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, options);
+    public void makeEventSpinners(){
+        //Get and set-up event spinner for event update/delete pop-up
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+                eventBag.getNames());
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        eventSpinner.setAdapter(adapter);
+
+        //Get and set-up event type spinner for event update/delete pop-up
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+                eventTypeBag.getNames(1));
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        eventTypeSpinner.setAdapter(adapter);
+
+        //Get and set-up event type spinner for event create/update pop-up
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+                eventTypeBag.getNames(0));
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         creatorEventTypeSpinner.setAdapter(adapter);
+    }
+
+    public void makeTimeSpinners() {
 
         hours = new ArrayList<String>();
         for (int i = 0; i < 10; i++) {
@@ -154,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             hours.add(i);
         }
         hourSpinner = (Spinner) eventCreator.getChildAt(5);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, hours);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, hours);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         hourSpinner.setAdapter(adapter);
 
@@ -200,8 +215,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
+    Make all pop-up objects
+    The order in which a builder is re-declared and pop-ups are created are important and should not
+    yet be tampered with
+     */
     public void makeDialogue() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+         /*
+        Error Alert
+         */
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {public void onClick(DialogInterface dialog, int id) { }});
+        error = builder.create();
 
         /*
         Success Alert
@@ -271,11 +297,29 @@ public class MainActivity extends AppCompatActivity {
         cetAlert = builder.create();
 
         /*
+        Clear Event History Confirmation
+         */
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                eventBag.setPastList(new ArrayList<Event>());
+                confirm.show();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Close
+            }
+        });
+        builder.setMessage("Clear your history?");
+        chAlert = builder.create();
+
+        /*
         Clear All Events & Event Types Confirmation
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 eventBag.setList(new ArrayList<Event>());
+                eventBag.setPastList(new ArrayList<Event>());
                 eventTypeBag.clear();
                 confirm.show();
             }
@@ -285,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                 //Close
             }
         });
-        builder.setMessage("Clear all current events and event types?");
+        builder.setMessage("Clear all current and past events and event types?");
         caAlert = builder.create();
 
         /*
@@ -297,14 +341,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 String s = eventTypeCreator.getText().toString().trim();
                 if (s != null) {
-                    if (s.isEmpty() == false) {
-                        if (eventTypeBag.add(s)) {
-                            //for(int i = 0; i < eventTypeBag.getListSize(); i++)System.out.println(eventTypeBag.getType(i).getName());
-                            eventTypeCreator.setText("");
-                            confirm.show();
-                        } else {
-                            eventTypeFail.setMessage("The type you entered already exists.");
-                            eventTypeFail.show();
+                    if (s.isEmpty() == false) { //Ensure input isn't empty
+                        if(update == false){ //Add a new event type
+                            if (eventTypeBag.add(s)) {
+                                //for(int i = 0; i < eventTypeBag.getListSize(); i++)System.out.println(eventTypeBag.getType(i).getName());
+                                eventTypeCreator.setText("");
+                                confirm.show();
+                                makeEventSpinners();
+                            } else {
+                                eventTypeFail.setMessage("The type you entered already exists.");
+                                eventTypeFail.show();
+                            }
+                        } else { //Update a previous event type
+                            if(eventTypeBag.update(reference, s)){
+                                eventTypeCreator.setText("");
+                                confirm.show();
+                                makeEventSpinners();
+                            } else {
+                                eventTypeFail.setMessage("The type you entered already exists.");
+                                eventTypeFail.show();
+                            }
                         }
                     } else {
                         eventTypeFail.setMessage("Please enter a valid name.");
@@ -326,11 +382,11 @@ public class MainActivity extends AppCompatActivity {
         /*
         Add New & Update Event Dialogue
          */
-        builder.setMessage("Enter New Event Type:");
+        builder.setMessage("Enter New Event:");
         builder.setView(eventCreator);
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                eventCreatorNewEvent();
+                detailEventNewEvent();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -341,21 +397,22 @@ public class MainActivity extends AppCompatActivity {
         detailEvent = builder.create();
 
         /*
-        Add/Update/Complete event selection pop-up
+        Update/Delete/Complete event selection pop-up
          */
-        //Get and set-up spinner for pop-up
-        final Spinner spinner = (Spinner) getLayoutInflater().inflate(R.layout.event_selector, null);
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
-                eventBag.getNames());
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
         //Builder must be redeclared to avoid previous pop-up attributes from overlapping
         builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select an event to update");
+        builder.setTitle("Select an event:");
+        builder.setView(eventSpinner);
         builder.setPositiveButton("Find", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                reference = spinner.getSelectedItem().toString();
-                detailEvent.show();
+                reference = eventSpinner.getSelectedItem().toString();
+                if(update == true){
+                    detailEvent.show();
+                }
+                else{
+                    eventBag.remove(reference);
+                    confirm.show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -366,14 +423,24 @@ public class MainActivity extends AppCompatActivity {
         eventSelector = builder.create();
 
         /*
-        Add/Update event type selector pop-up
-
-        final Spinner spinnerB = (Spinner) getLayoutInflater().inflate(R.layout.event_type_selector, null);
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
-                eventBag.getNames());
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinnerB.setAdapter(adapter);
+        Update/Delete event type selector pop-up
         */
+        builder.setTitle("Select an event type:");
+        builder.setView(eventTypeSpinner);
+        builder.setPositiveButton("Find", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                reference = eventTypeSpinner.getSelectedItem().toString();
+                if(update == true){
+                    detailEventType.show();
+                }
+                else{
+                    eventTypeBag.remove(reference);
+                    confirm.show();
+                    makeEventSpinners();
+                }
+            }
+        });
+        eventTypeSelector = builder.create();
 
         /*
         Add button pop-up
@@ -390,47 +457,61 @@ public class MainActivity extends AppCompatActivity {
                 else detailEventType.show();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                //Close
-            }
-        });
         adder = builder.create();
 
     }
 
-    public void eventCreatorNewEvent() {
+    /*
+    The event creation/update window handle on click procedure
+     */
+    public void detailEventNewEvent() {
+        //Get title
         EditText et = (EditText) eventCreator.getChildAt(1);
         String s = et.getText().toString().trim();
         if (s != null) {
-            if (s.isEmpty() == false) {
+            if (s.isEmpty() == false) { //Ensure title isn't empty
                 int month = Integer.parseInt(monthSpinner.getSelectedItem().toString());
                 int day = Integer.parseInt(daySpinner.getSelectedItem().toString());
                 int year = Integer.parseInt(yearSpinner.getSelectedItem().toString());
                 System.out.println(year);
-                if (dayExists(month, day, year)) {
+                if (dayExists(month, day, year)) { //Ensure a false date wasn't provided
                     int hour = Integer.parseInt(hourSpinner.getSelectedItem().toString());
                     int minute = Integer.parseInt(minuteSpinner.getSelectedItem().toString());
                     //Due to some currently unknown glitch, the paramaters must be modified to provide the correct date
                     Date date = new Date(year - 1900, month - 1, day, hour, minute);
                     Date now = new Date();
 
+                    //Debugger code
+                    /*
                     System.out.println(year + " " + month + " " + day + " " + hour + " " + minute);
                     System.out.println(date.toString());
                     System.out.println(date.getTime());
                     System.out.println(now.toString());
                     System.out.println(now.getTime());
+                    */
 
-                    if (date.getTime() > now.getTime()) {
+                    if (date.getTime() > now.getTime()) { //Ensure date and time hasn't yet passed
                         EventType type = eventTypeBag.getType(creatorEventTypeSpinner.getSelectedItem().toString());
-                        //Insert conditional here
-                        if (eventBag.add(s, type, year, month, day, hour, minute)) {
-                            et.setText("");
-                            confirm.show();
-                        } else {
-                            eventFail.setMessage("An object of the given objective title already exists.");
-                            eventFail.show();
-                        }
+                       if(update == false) { //Handle new event
+                           if (eventBag.add(s, type, year, month, day, hour, minute)) {
+                               et.setText("");
+                               confirm.show();
+                               makeEventSpinners();
+                           } else {
+                               eventFail.setMessage("An object of the given objective title already exists.");
+                               eventFail.show();
+                           }
+                       }
+                       else { //Handle update event
+                           if(eventBag.update(reference, s, type, year, month, day, hour, minute)){
+                               et.setText("");
+                               confirm.show();
+                               makeEventSpinners();
+                           } else {
+                               eventFail.setMessage("An object of the given objective title already exists.");
+                               eventFail.show();
+                           }
+                       }
                     } else {
                         eventFail.setMessage("The date provided has already passed.");
                         eventFail.show();
@@ -456,6 +537,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //Operation to test if a date given exists
     public boolean dayExists(int month, int day, int year) {
         if (day == 31) {
             if (month == 2 || month == 4 || month == 6 || month == 9 || month == 11) return false;
@@ -468,8 +550,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //Make Hamburger Menu, assign operations to list items, change update boolean accordingly
     public void makeHamburger() {
-        //Make Hamburger Menu, assign operations to list items
         NavigationView nView = findViewById(R.id.nav_view);
         nView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -478,14 +560,54 @@ public class MainActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
 
                         if (menuItem.getTitle().equals("Add Event")) {
+                            update = false;
                             detailEvent.show();
-                        } else if (menuItem.getTitle().equals("Add Event Type")) {
+                        } else if(menuItem.getTitle().equals("Update Event")){
+                            if(eventBag.getListSize() > 0){
+                                update = true;
+                                eventSelector.show();
+                            }
+                            else{
+                                error.setMessage("There are no events to update.");
+                                error.show();
+                            }
+                        } else if(menuItem.getTitle().equals("Remove Event")){
+                            if(eventBag.getListSize() > 0){
+                                update = false;
+                                eventSelector.show();
+                            }
+                            else{
+                                error.setMessage("There are no events to remove.");
+                                error.show();
+                            }
+                        }else if (menuItem.getTitle().equals("Add Event Type")) {
+                            update = false;
                             detailEventType.show();
+                        } else if(menuItem.getTitle().equals("Update Event Type")){
+                            if(eventTypeBag.getListSize() > 1){
+                                update = true;
+                                eventTypeSelector.show();
+                            }
+                            else{
+                                error.setMessage("There are no types to update.");
+                                error.show();
+                            }
+                        } else if(menuItem.getTitle().equals("Remove Event Type")){
+                            if(eventTypeBag.getListSize() > 1){
+                                update = false;
+                                eventTypeSelector.show();
+                            }
+                            else{
+                                error.setMessage("There are no types to remove.");
+                                error.show();
+                            }
                         } else if (menuItem.getTitle().equals("Clear Events")) {
                             ceAlert.show();
                         } else if (menuItem.getTitle().equals("Clear Event Types")) {
                             cetAlert.show();
-                        } else if (menuItem.getTitle().equals("Clear All")) {
+                        } else if (menuItem.getTitle().equals("Clear History")) {
+                            chAlert.show();
+                        }  else if (menuItem.getTitle().equals("Clear All")) {
                             caAlert.show();
                         } else if (menuItem.getTitle().equals("Save")) {
                             //Add message variance for errors
@@ -498,12 +620,25 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    //Set home button action
     public void setAddButtonAction() {
         Button button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                update = false;
                 adder.show();
+
+                //Debugger code
+                /*
+                for(int i = 0; i < eventBag.getListSize(); i++){
+                    System.out.println(eventBag.getEvent(i).getInfo());
+                }
+
+                for(int i = 0; i < eventTypeBag.getListSize(); i++){
+                    System.out.println(eventTypeBag.getType(i).getName());
+                }
+                */
             }
         });
     }
