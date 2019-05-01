@@ -50,29 +50,13 @@
             android:id="@+id/button"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="-55dp"
-            android:layout_marginRight="0dp"
             android:background="@color/colorPrimary"
             android:text="+"
             android:textColor="#ffffff"
             android:textSize="36sp" />
-
-        <TextView
-            android:id="@+id/deadlinesTextView"
-            android:layout_width="20dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="-55dp"
-            android:layout_marginBottom="8dp"
-            android:text="Deadlines"
-            android:textAllCaps="true"
-            android:textColor="#ffffff
-            android:textSize="30sp" />
 
         <Spinner
             android:id="@+id/sortBySpinner"
