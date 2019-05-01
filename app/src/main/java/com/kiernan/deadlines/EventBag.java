@@ -169,13 +169,9 @@ public class EventBag implements Serializable {
         }
     }
 
-    //List getter - hard copy
+    //List getter - shallow copy
     public ArrayList<Event> getList() {
-        ArrayList<Event> copy = new ArrayList<Event>();
-        for (int i = 0; i < eventList.size(); i++) {
-            copy.add(new Event(eventList.get(i)));
-        }
-        return copy;
+        return eventList;
     }
 
     /*

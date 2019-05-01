@@ -8,6 +8,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -157,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
                 eventTypeBag.getNames(0));
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         creatorEventTypeSpinner.setAdapter(adapter);
+
+        renderEventsToView();
     }
 
     public void makeTimeSpinners() {
@@ -646,18 +650,18 @@ public class MainActivity extends AppCompatActivity {
     //Spins up the EventAdapter class and passes the EventBag ArrayList
     //Commented out so it doesn't break shit inadvertently due to EventBag not being active
     public void prepRecyclerView() {
-        /*
+
         eventAdapter = new EventAdapter(eventBag.getList());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         eventRecycler.setLayoutManager(mLayoutManager);
         eventRecycler.setItemAnimator(new DefaultItemAnimator());
         eventRecycler.setAdapter(eventAdapter);
-        */
+
     }
 
     //Renders the events to screen, call this whenever a new event is added or things get sorted (maybe)
     //Commented out so it doesn't break shit inadvertently due to EventBag not being active
     public void renderEventsToView() {
-        //eventAdapter.notifyDataSetChanged();
+        eventAdapter.notifyDataSetChanged();
     }
 }

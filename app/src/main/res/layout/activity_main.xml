@@ -10,7 +10,7 @@
     >
 
     <!--All non-side menu objects on screen are to be inserted here for the side menu to slide over-->
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -25,50 +25,54 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="62dp" />
 
-        <ImageButton
+        <!--ImageButton
             android:id="@+id/menuBtn"
             android:layout_width="62dp"
             android:layout_height="55dp"
             android:background="@color/colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/hamburger_icon" />
+            app:srcCompat="@drawable/hamburger_icon" /-->
 
-        <TextView
-            android:id="@+id/deadlinesTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Deadlines"
-            android:textAllCaps="true"
-            android:textColor="#ffffff"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-            app:layout_constraintStart_toEndOf="@+id/menuBtn"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="47dp"
-            android:layout_height="55dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/colorPrimary"
-            android:text="+"
-            android:textColor="#ffffff"
-            android:textSize="36sp"
+        <!--
             app:layout_constraintBottom_toBottomOf="@+id/toolbar"
             app:layout_constraintEnd_toEndOf="@+id/toolbar"
             app:layout_constraintHorizontal_bias="0.937"
             app:layout_constraintStart_toEndOf="@+id/deadlinesTextView"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0" -->
+
+        <!--app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintEnd_toStartOf="@+id/button"
+            app:layout_constraintTop_toTopOf="parent" -->
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="-55dp"
+            android:layout_marginRight="0dp"
+            android:background="@color/colorPrimary"
+            android:text="+"
+            android:textColor="#ffffff"
+            android:textSize="36sp" />
+
+        <TextView
+            android:id="@+id/deadlinesTextView"
+            android:layout_width="20dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="-55dp"
+            android:layout_marginBottom="8dp"
+            android:text="Deadlines"
+            android:textAllCaps="true"
+            android:textColor="#ffffff
+            android:textSize="30sp" />
 
         <Spinner
             android:id="@+id/sortBySpinner"
@@ -103,7 +107,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/eventRecycler"
             android:layout_width="300dp"
-            android:layout_height="0dp"
+            android:layout_height="942dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
@@ -125,7 +129,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sortBySpinner"
             app:layout_constraintVertical_bias="0.0" />
 
-    </FrameLayout>
+    </RelativeLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
