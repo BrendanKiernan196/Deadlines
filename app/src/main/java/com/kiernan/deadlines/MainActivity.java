@@ -114,11 +114,15 @@ public class MainActivity extends AppCompatActivity {
     //Instantiate bags and load data from files
     public void loadBags() {
         eventBag = new EventBag();
-        //eventBag.setList(eventBag.loadData(0);
-        //eventBag.setPastList(eventBag.loadData(1));
-
         eventTypeBag = new EventTypeBag(eventBag);
-        //eventTypeBag.setTypeList(eventTypeBag.loadData());
+
+        try{
+        eventBag.setList(eventBag.loadData(0));
+        eventBag.setPastList(eventBag.loadData(1));
+        eventTypeBag.setTypeList(eventTypeBag.loadData());
+        } catch(Exception e){
+
+        }
     }
 
     /*
@@ -415,6 +419,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
                     eventBag.remove(reference);
+                    makeEventSpinners();
                     confirm.show();
                 }
             }
@@ -614,7 +619,9 @@ public class MainActivity extends AppCompatActivity {
                         }  else if (menuItem.getTitle().equals("Clear All")) {
                             caAlert.show();
                         } else if (menuItem.getTitle().equals("Save")) {
-                            //Add message variance for errors
+                            eventBag.saveData(eventBag.getList(), 0);
+                            eventBag.saveData(eventBag.getPastList(), 1);
+                            eventTypeBag.saveData(eventTypeBag.getTypeList());
                             confirm.show();
                         }
 
@@ -664,4 +671,21 @@ public class MainActivity extends AppCompatActivity {
     public void renderEventsToView() {
         eventAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    protected void onStop(){
+        eventBag.saveData(eventBag.getList(), 0);
+        eventBag.saveData(eventBag.getPastList(), 1);
+        eventTypeBag.saveData(eventTypeBag.getTypeList());
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy(){
+        eventBag.saveData(eventBag.getList(), 0);
+        eventBag.saveData(eventBag.getPastList(), 1);
+        eventTypeBag.saveData(eventTypeBag.getTypeList());
+        super.onDestroy();
+    }
+
 }

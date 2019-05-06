@@ -43,7 +43,7 @@ public class EventAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         MyViewHolder mvh = (MyViewHolder)viewHolder;
         Event temp = events.get(i);
-        mvh.title.setText(temp.getTitle()); //set the data members here
+        mvh.title.setText(temp.getInfo()); //set the data members here
         mvh.date.setText(temp.getMonth() + "/" + temp.getDay()); //string concat, just tell Android Studio to be quiet
     }
 
