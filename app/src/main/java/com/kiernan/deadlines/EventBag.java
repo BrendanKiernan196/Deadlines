@@ -1,5 +1,6 @@
 package com.kiernan.deadlines;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
@@ -272,16 +273,16 @@ public class EventBag implements Serializable {
     //Loads the ArrayList from a file. Pass 0 for current events, not 0 for past events.
     //NOTE: IOException includes FileNotFoundException, so a non-existent file shouldn't break shit.
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static ArrayList loadData(int signal) {
+    public static ArrayList loadData(Context context, int signal) {
         ArrayList toLoad = new ArrayList<>();
 
         try {
             FileInputStream fis;
 
             if (signal == 0)
-                fis = new FileInputStream("event.dat");
+                fis = context.openFileInput("event.dat");
             else
-                fis = new FileInputStream("past_event.dat");
+                fis = context.openFileInput("past_event.dat");
 
             try (ObjectInputStream ois = new ObjectInputStream(fis)) {
                 toLoad = (ArrayList) ois.readObject();
@@ -297,13 +298,14 @@ public class EventBag implements Serializable {
 
     //Saves the ArrayList to a file. Pass 0 for current events, not 0 for past events.
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static void saveData(ArrayList<Event> toSave, int signal) {
+    public static void saveData(Context context, ArrayList<Event> toSave, int signal) {
         try {
             FileOutputStream fos;
-            if (signal == 0)
-                fos = new FileOutputStream("event.dat");
+            if (signal == 0) {
+                fos = context.openFileOutput("events.dat", Context.MODE_PRIVATE);
+            }
             else
-                fos = new FileOutputStream("past_event.dat");
+                fos = context.openFileOutput("past_event.dat", Context.MODE_PRIVATE);
             try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
                 oos.writeObject(toSave);
             }

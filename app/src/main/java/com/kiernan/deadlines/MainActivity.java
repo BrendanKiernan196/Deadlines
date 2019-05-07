@@ -120,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
         eventTypeBag = new EventTypeBag(eventBag);
 
         try{
-        eventBag.setList(eventBag.loadData(0));
-        eventBag.setPastList(eventBag.loadData(1));
-        eventTypeBag.setTypeList(eventTypeBag.loadData());
+        eventBag.setList(EventBag.loadData(getApplicationContext(),0));
+        eventBag.setPastList(EventBag.loadData(getApplicationContext(),1));
+        eventTypeBag.setTypeList(EventTypeBag.loadData(getApplicationContext()));
         } catch(Exception e){
 
         }
@@ -649,9 +649,9 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(intent);
 
                         } else if (menuItem.getTitle().equals("Save")) {
-                            eventBag.saveData(eventBag.getList(), 0);
-                            eventBag.saveData(eventBag.getPastList(), 1);
-                            eventTypeBag.saveData(eventTypeBag.getTypeList());
+                            EventBag.saveData(getApplicationContext(), eventBag.getList(), 0);
+                            EventBag.saveData(getApplicationContext(), eventBag.getPastList(), 1);
+                            EventTypeBag.saveData(getApplicationContext(), eventTypeBag.getTypeList());
                             confirm.show();
                         }
 
@@ -704,17 +704,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop(){
-        eventBag.saveData(eventBag.getList(), 0);
-        eventBag.saveData(eventBag.getPastList(), 1);
-        eventTypeBag.saveData(eventTypeBag.getTypeList());
+        EventBag.saveData(getApplicationContext(), eventBag.getList(), 0);
+        EventBag.saveData(getApplicationContext(), eventBag.getPastList(), 1);
+        EventTypeBag.saveData(getApplicationContext(), eventTypeBag.getTypeList());
         super.onStop();
     }
 
     @Override
     protected void onDestroy(){
-        eventBag.saveData(eventBag.getList(), 0);
-        eventBag.saveData(eventBag.getPastList(), 1);
-        eventTypeBag.saveData(eventTypeBag.getTypeList());
+        EventBag.saveData(getApplicationContext(), eventBag.getList(), 0);
+        EventBag.saveData(getApplicationContext(), eventBag.getPastList(), 1);
+        EventTypeBag.saveData(getApplicationContext(), eventTypeBag.getTypeList());
         super.onDestroy();
     }
 

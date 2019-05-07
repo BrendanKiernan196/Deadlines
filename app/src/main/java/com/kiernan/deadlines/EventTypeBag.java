@@ -1,5 +1,6 @@
 package com.kiernan.deadlines;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
@@ -198,12 +199,12 @@ public class EventTypeBag implements Serializable {
     //Loads the ArrayList from a file.
     //NOTE: IOException includes FileNotFoundException, so a non-existent file shouldn't break shit.
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static ArrayList loadData() {
+    public static ArrayList loadData(Context context) {
         ArrayList toLoad = new ArrayList<>();
         toLoad.add(new EventType("Unclassified"));
         try {
             FileInputStream fis =
-                    new FileInputStream("type.dat");
+                    context.openFileInput("type.dat");
             try (ObjectInputStream ois = new ObjectInputStream(fis)) {
                 toLoad = (ArrayList)ois.readObject();
             } catch (ClassNotFoundException ex) {
@@ -218,10 +219,10 @@ public class EventTypeBag implements Serializable {
 
     //Saves the ArrayList to a file
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static void saveData(ArrayList<EventType> toSave) {
+    public static void saveData(Context context, ArrayList<EventType> toSave) {
         try {
             FileOutputStream fos;
-            fos = new FileOutputStream("type.dat");
+            fos = context.openFileOutput("type.dat", Context.MODE_PRIVATE);
             try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
                 oos.writeObject(toSave);
             }
