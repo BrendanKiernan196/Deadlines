@@ -4,28 +4,57 @@
 
     <group android:checkableBehavior="single">
 
-        <item android:id="@+id/addEvent"
-            android:title="Add Event"    />
-        <item android:id="@+id/updateEvent"
-            android:title="Update Event"    />
-        <item android:id="@+id/removeEvent"
-            android:title="Remove Event"    />
-        <item android:id="@+id/addEventType"
-            android:title="Add Event Type"    />
-        <item android:id="@+id/updateEventType"
-            android:title="Update Event Type"    />
-        <item android:id="@+id/removeEventType"
-            android:title="Remove Event Type"    />
-        <item android:id="@+id/clearEvents"
-            android:title="Clear Events"    />
-        <item android:id="@+id/clearEventTypes"
-            android:title="Clear Event Types"    />
-        <item android:id="@+id/clearHistory"
-            android:title="Clear History"    />
-        <item android:id="@+id/clearAll"
-            android:title="Clear All"    />
-        <item android:id="@+id/save"
-            android:title="Save"    />
+        <item
+            android:id="@+id/About"
+            android:icon="@drawable/about2"
+            android:title="About" />
+        <item
+            android:id="@+id/Advice"
+            android:icon="@drawable/web"
+            android:title="Advice" />
+        <item
+            android:id="@+id/Tutorial"
+            android:icon="@drawable/tutorial"
+            android:title="Tutorial" />
+        <item
+            android:id="@+id/addEvent"
+            android:icon="@drawable/add_event"
+            android:title="Add Task" />
+        <item
+            android:id="@+id/addEventType"
+            android:title="Add Task Category" />
+        <item
+            android:id="@+id/updateEvent"
+            android:icon="@drawable/update_event"
+            android:title="Update Tasks" />
+        <item
+            android:id="@+id/updateEventType"
+            android:title="Update Categories" />
+        <item
+            android:id="@+id/removeEvent"
+            android:icon="@drawable/remove_event"
+            android:title="Remove Task" />
+
+        <item
+            android:id="@+id/removeEventType"
+            android:title="Remove Task Category" />
+        <item
+            android:id="@+id/clearAll"
+            android:icon="@drawable/remove"
+            android:title="Clear All" />
+        <item
+            android:id="@+id/clearHistory"
+            android:title="Clear History" />
+        <item
+            android:id="@+id/clearEvents"
+            android:title="Clear All Tasks" />
+        <item
+            android:id="@+id/clearEventTypes"
+            android:title="Clear All Task Categories" />
+        <item
+            android:id="@+id/save"
+            android:icon="@drawable/save"
+            android:title="Save" />
 
     </group>
 

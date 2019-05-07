@@ -1,6 +1,7 @@
 package com.kiernan.deadlines;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,7 +20,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.net.Uri;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         //setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.hamburger_icon);
+        actionbar.setHomeAsUpIndicator(R.drawable.hamburger2);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         eventRecycler = findViewById(R.id.eventRecycler);
@@ -284,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
                 //Close
             }
         });
-        builder.setMessage("Clear all in-progress events?");
+        builder.setMessage("Clear all in-progress Tasks?");
         ceAlert = builder.create();
 
         /*
@@ -301,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                 //Close
             }
         });
-        builder.setMessage("Clear all currently defined event types?");
+        builder.setMessage("Clear all currently Task Categories?");
         cetAlert = builder.create();
 
         /*
@@ -337,13 +340,13 @@ public class MainActivity extends AppCompatActivity {
                 //Close
             }
         });
-        builder.setMessage("Clear all current and past events and event types?");
+        builder.setMessage("Clear all current and past tasks and categories?");
         caAlert = builder.create();
 
         /*
         Add New & Update Event Type Dialogue
          */
-        builder.setMessage("Enter New Event Type:");
+        builder.setMessage("Enter New Task Category:");
         builder.setView(eventTypeCreator);
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -357,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
                                 confirm.show();
                                 makeEventSpinners();
                             } else {
-                                eventTypeFail.setMessage("The type you entered already exists.");
+                                eventTypeFail.setMessage("The Category you entered already exists.");
                                 eventTypeFail.show();
                             }
                         } else { //Update a previous event type
@@ -366,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
                                 confirm.show();
                                 makeEventSpinners();
                             } else {
-                                eventTypeFail.setMessage("The type you entered already exists.");
+                                eventTypeFail.setMessage("The Category you entered already exists.");
                                 eventTypeFail.show();
                             }
                         }
@@ -390,7 +393,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         Add New & Update Event Dialogue
          */
-        builder.setMessage("Enter New Event:");
+        builder.setMessage("Enter New Task:");
         builder.setView(eventCreator);
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -409,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
          */
         //Builder must be redeclared to avoid previous pop-up attributes from overlapping
         builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select an event:");
+        builder.setTitle("Select a Task:");
         builder.setView(eventSpinner);
         builder.setPositiveButton("Find", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -434,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         Update/Delete event type selector pop-up
         */
-        builder.setTitle("Select an event type:");
+        builder.setTitle("Select a Task Category:");
         builder.setView(eventTypeSpinner);
         builder.setPositiveButton("Find", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -457,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
         //Builder must be redeclared to avoid previous pop-up attributes from overlapping
         builder = new AlertDialog.Builder(this);
         //Options of what type of new thing to add - pop-up choice
-        String[] options = {"Event", "EventType"};
+        String[] options = {"Task", "Task Category"};
         builder.setTitle("Add New:").setItems(options, new DialogInterface.OnClickListener() {
             @Override
             //which = index in options
@@ -568,56 +571,83 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
 
-                        if (menuItem.getTitle().equals("Add Event")) {
+                        if (menuItem.getTitle().equals("Add Task")) {
                             update = false;
                             detailEvent.show();
-                        } else if(menuItem.getTitle().equals("Update Event")){
+
+                        } else if(menuItem.getTitle().equals("Update Tasks")){
                             if(eventBag.getListSize() > 0){
                                 update = true;
                                 eventSelector.show();
                             }
+
                             else{
-                                error.setMessage("There are no events to update.");
+                                error.setMessage("There are no tasks to update.");
                                 error.show();
                             }
-                        } else if(menuItem.getTitle().equals("Remove Event")){
+
+                        } else if(menuItem.getTitle().equals("Remove Task")){
                             if(eventBag.getListSize() > 0){
                                 update = false;
                                 eventSelector.show();
                             }
+
                             else{
-                                error.setMessage("There are no events to remove.");
+                                error.setMessage("There are no tasks to remove.");
                                 error.show();
                             }
-                        }else if (menuItem.getTitle().equals("Add Event Type")) {
+
+                        }else if (menuItem.getTitle().equals("Add Task Category")) {
                             update = false;
                             detailEventType.show();
-                        } else if(menuItem.getTitle().equals("Update Event Type")){
+
+                        } else if(menuItem.getTitle().equals("Update Categories")){
                             if(eventTypeBag.getListSize() > 1){
                                 update = true;
                                 eventTypeSelector.show();
                             }
+
                             else{
-                                error.setMessage("There are no types to update.");
+                                error.setMessage("There are no categories to update.");
                                 error.show();
                             }
-                        } else if(menuItem.getTitle().equals("Remove Event Type")){
+
+                        } else if(menuItem.getTitle().equals("Remove Task Category")){
                             if(eventTypeBag.getListSize() > 1){
                                 update = false;
                                 eventTypeSelector.show();
                             }
+
                             else{
-                                error.setMessage("There are no types to remove.");
+                                error.setMessage("There are no categories to remove.");
                                 error.show();
                             }
-                        } else if (menuItem.getTitle().equals("Clear Events")) {
+
+                        } else if (menuItem.getTitle().equals("Clear All Tasks")) {
                             ceAlert.show();
-                        } else if (menuItem.getTitle().equals("Clear Event Types")) {
+
+                        } else if (menuItem.getTitle().equals("Clear All Task Categories")) {
                             cetAlert.show();
+
                         } else if (menuItem.getTitle().equals("Clear History")) {
                             chAlert.show();
+
                         }  else if (menuItem.getTitle().equals("Clear All")) {
                             caAlert.show();
+                        }
+
+                        else if (menuItem.getTitle().equals("Advice")) {
+                            startActivity(new Intent(MainActivity.this, Main2Activity.class));
+                        }
+                        else if (menuItem.getTitle().equals("About")) {
+                            startActivity(new Intent(MainActivity.this, About.class));
+                        }
+
+                        else if (menuItem.getTitle().equals("Tutorial")) {
+                            Uri uri = Uri.parse("https://www.youtube.com/watch?v=2MM10X5HlQQ");
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            startActivity(intent);
+
                         } else if (menuItem.getTitle().equals("Save")) {
                             eventBag.saveData(eventBag.getList(), 0);
                             eventBag.saveData(eventBag.getPastList(), 1);

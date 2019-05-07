@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Deadlines</string>
+    <string name="videoId">fiBt7hGCCpU</string>
+    <string name="advice_for_never_missing_a_deadline">Advice for Never Missing a Deadline</string>
+    <string name="creators">Creators</string>
+    <string name="for_educational_purposes_only">For Educational Purposes Only</string>
 </resources>

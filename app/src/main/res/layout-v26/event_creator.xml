@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/eventCreator"
+    android:layout_width="400dp"
+    android:layout_height="200dp">
+
+    <TextView
+        android:id="@+id/objectiveLabel"
+        android:layout_width="50dp"
+        android:layout_height="15dp"
+        android:text="Objective:"
+        android:textColor="#009688"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/newEventName"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/objectiveLabel"
+        android:inputType="text"
+        android:textColor="#000706"
+        android:textColorHighlight="#009688"
+        android:textColorHint="#009688"
+        android:textColorLink="#009688"
+        android:autofillHints="" />
+
+    <TextView
+        android:id="@+id/typeLabel"
+        android:layout_width="100dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/newEventName"
+        android:text="Task Category:"
+        android:textColor="#009688"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/typeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_below="@id/typeLabel" />
+
+    <TextView
+        android:id="@+id/hourLabel"
+        android:layout_width="100dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/typeSpinner"
+        android:layout_marginTop="8dp"
+        android:text="Hour:"
+        android:textColor="#009688"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/hourSpinner"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/hourLabel"
+        android:layout_marginTop="0dp" />
+
+    <TextView
+        android:id="@+id/minuteLabel"
+        android:layout_width="100dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/typeSpinner"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@id/hourLabel"
+        android:text="Minute:"
+        android:textColor="#009688"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/minuteSpinner"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/minuteLabel"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="0dp"
+        android:layout_toRightOf="@id/hourSpinner" />
+
+    <TextView
+        android:id="@+id/monthLabel"
+        android:layout_width="85dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/hourSpinner"
+        android:layout_marginTop="18dp"
+        android:text="Month:"
+        android:textColor="#009688"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/monthSpinner"
+        android:layout_width="85dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/monthLabel"
+        android:layout_marginTop="0dp" />
+
+
+    <TextView
+        android:id="@+id/dayLabel"
+        android:layout_width="85dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/hourSpinner"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="19dp"
+        android:layout_toRightOf="@+id/monthLabel"
+        android:text="Day:"
+        android:textColor="#009688"
+        android:textSize="10dp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/daySpinner"
+        android:layout_width="85dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/dayLabel"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="-1dp"
+        android:layout_toRightOf="@+id/monthSpinner" />
+
+    <TextView
+        android:id="@+id/yearLabel"
+        android:layout_width="100dp"
+        android:layout_height="15dp"
+        android:layout_below="@id/hourSpinner"
+        android:layout_marginLeft="27dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@+id/dayLabel"
+        android:text="Year:"
+        android:textColor="#009688"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/yearSpinner"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/yearLabel"
+        android:layout_marginLeft="27dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/daySpinner" />
+
+
+</android.widget.RelativeLayout>
