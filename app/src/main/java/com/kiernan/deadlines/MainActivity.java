@@ -1,8 +1,11 @@
 package com.kiernan.deadlines;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +25,15 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.net.Uri;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     //For eventSelector and eventTypeSelector - name of event or type to be updated
     private String reference;
 
+    //For saving and loading
+    private String eString, tString;
+
     /*
     For eventCreator and eventTypeCreator - indicate if the information obtained is for an update
     True - update object of name @string/reference
@@ -68,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout eventCreator;
 
     private EditText eventTypeCreator;
+
+    private File eventFile, typeFile;
 
     //Event Creator Spinners
     private Spinner eventSpinner, eventTypeSpinner, creatorEventTypeSpinner, hourSpinner,
@@ -89,7 +106,11 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         eventRecycler = findViewById(R.id.eventRecycler);
 
+        eString = "eventList";
+        tString = "typeList";
+
         loadBags();
+        loadFiles();
         makeViews();
         makeEventSpinners();
         makeTimeSpinners();
@@ -114,18 +135,45 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void saveFiles(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sp.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(eventBag.getList());
+        System.out.println(json);
+        editor.putString(eString, json);
+        editor.commit();
+        gson = new Gson();
+        json = gson.toJson(eventTypeBag.getTypeList());
+        System.out.println(json);
+        editor.putString(tString, json);
+        editor.commit();
+    }
+
+    public void loadFiles(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String json = sp.getString(eString, null);
+        System.out.println(json);
+        Type type = new TypeToken<ArrayList<Event>>() {}.getType();
+        ArrayList<Event> ev = gson.fromJson(json, type);
+        //System.out.println(ev);
+        if(ev != null) eventBag.setList(ev);
+        json = sp.getString(tString, null);
+        System.out.println(json);
+        type = new TypeToken<ArrayList<EventType>>() {}.getType();
+        ArrayList<EventType> et = gson.fromJson(json, type);
+        //System.out.println(et);
+        if(et != null) eventTypeBag.setTypeList(et);
+    }
+
     //Instantiate bags and load data from files
     public void loadBags() {
         eventBag = new EventBag();
         eventTypeBag = new EventTypeBag(eventBag);
 
-        try{
-        eventBag.setList(EventBag.loadData(getApplicationContext(),0));
-        eventBag.setPastList(EventBag.loadData(getApplicationContext(),1));
-        eventTypeBag.setTypeList(EventTypeBag.loadData(getApplicationContext()));
-        } catch(Exception e){
-
-        }
+        //eventTypeBag.load(typeFile);
+        //eventBag.load(eventFile);
     }
 
     /*
@@ -279,7 +327,9 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 eventBag.setList(new ArrayList<Event>());
+                prepRecyclerView();
                 confirm.show();
+                makeEventSpinners();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -296,7 +346,9 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 eventTypeBag.clearAndUpdate();
+                prepRecyclerView();
                 confirm.show();
+                makeEventSpinners();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -312,8 +364,11 @@ public class MainActivity extends AppCompatActivity {
          */
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                eventBag.setPastList(new ArrayList<Event>());
+                //eventBag.setPastList(new ArrayList<Event>());
+                //loadFiles();
+                //prepRecyclerView();
                 confirm.show();
+                //makeEventSpinners();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -332,7 +387,9 @@ public class MainActivity extends AppCompatActivity {
                 eventBag.setList(new ArrayList<Event>());
                 eventBag.setPastList(new ArrayList<Event>());
                 eventTypeBag.clear();
+                prepRecyclerView();
                 confirm.show();
+                makeEventSpinners();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -649,9 +706,9 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(intent);
 
                         } else if (menuItem.getTitle().equals("Save")) {
-                            EventBag.saveData(getApplicationContext(), eventBag.getList(), 0);
-                            EventBag.saveData(getApplicationContext(), eventBag.getPastList(), 1);
-                            EventTypeBag.saveData(getApplicationContext(), eventTypeBag.getTypeList());
+                            //eventBag.save(eventFile);
+                            //eventTypeBag.save(typeFile);
+                            saveFiles();
                             confirm.show();
                         }
 
@@ -704,17 +761,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop(){
-        EventBag.saveData(getApplicationContext(), eventBag.getList(), 0);
-        EventBag.saveData(getApplicationContext(), eventBag.getPastList(), 1);
-        EventTypeBag.saveData(getApplicationContext(), eventTypeBag.getTypeList());
+        //eventBag.save(eventFile);
+        //eventTypeBag.save(typeFile);
+        saveFiles();
         super.onStop();
     }
 
     @Override
     protected void onDestroy(){
-        EventBag.saveData(getApplicationContext(), eventBag.getList(), 0);
-        EventBag.saveData(getApplicationContext(), eventBag.getPastList(), 1);
-        EventTypeBag.saveData(getApplicationContext(), eventTypeBag.getTypeList());
+        //eventBag.save(eventFile);
+        //eventTypeBag.save(typeFile);
+        saveFiles();
         super.onDestroy();
     }
 

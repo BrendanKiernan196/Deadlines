@@ -50,4 +50,8 @@ public class EventAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return events.size();
     }
+
+    public void update(ArrayList<Event> events){
+        this.events = events;
+    }
 }

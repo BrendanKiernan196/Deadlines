@@ -121,6 +121,7 @@ public class EventTypeBag implements Serializable {
         //Handle renaming type if conditions were met
         if(updateIndex != -1) {
             typeList.get(updateIndex).setName(newer);
+            eventBag.replaceType(former, typeList.get(updateIndex));
             return true;
         }
 
@@ -151,8 +152,9 @@ public class EventTypeBag implements Serializable {
     */
     public void clearAndUpdate(){
         typeList = new ArrayList<EventType>();
-        typeList.add(new EventType("Unclassified"));
-        eventBag.clearTypes(typeList.get(0));
+        EventType unclassified = new EventType("Unclassified");
+        typeList.add(unclassified);
+        eventBag.clearTypes(unclassified);
     }
 
     /*
@@ -240,6 +242,28 @@ public class EventTypeBag implements Serializable {
             System.out.println("File deleted successfully.");
         else
             System.out.println("File deletion failed.");
+    }
+
+    //Save event type list
+    public void save(File f){
+        try {
+            FileOutputStream fos = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(typeList);
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    //Load event type list
+    public void load(File f){
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            typeList = (ArrayList) ois.readObject();
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
 }
