@@ -105,7 +105,13 @@ public class EventBag implements Serializable {
         //Ensure title new title is unique and former exists
         for (int i = 0; i < eventList.size(); i++) {
             current = eventList.get(i).getTitle();
-            if (current.equalsIgnoreCase(newer)) return false;
+            if (current.equalsIgnoreCase(newer)){
+                if(current.equalsIgnoreCase(former)){
+                    updateIndex = i;
+                    break;
+                }
+                return false;
+            }
             if (current.equalsIgnoreCase(former)) updateIndex = i;
         }
 
