@@ -13,29 +13,25 @@
     android:paddingTop="@dimen/row_padding_vertical">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="10dp"
-        android:text="Title"
-        android:textSize="18sp" />
+        android:text="TextView" />
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/typeView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="292dp"
-        android:layout_marginLeft="292dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/title"
-        android:layout_toRightOf="@+id/title"
-        android:text="Date"
-        android:textSize="16sp" />
+        android:layout_below="@+id/titleView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="5dp"
+        android:text="TextView"
+        android:textAllCaps="true"
+        android:textStyle="italic" />
 
 </RelativeLayout>

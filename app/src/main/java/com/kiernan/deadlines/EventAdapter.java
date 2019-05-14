@@ -15,14 +15,14 @@ public class EventAdapter extends RecyclerView.Adapter {
 
     //Instantiates a ViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title;
-        public TextView date;
+        TextView title;
+        TextView type;
 
         //find those views by id here
         public MyViewHolder(View view) {
             super(view);
-            title = view.findViewById(R.id.title);
-            date = view.findViewById(R.id.date);
+            title = view.findViewById(R.id.titleView);
+            type = view.findViewById(R.id.typeView);
         }
     }
 
@@ -44,7 +44,7 @@ public class EventAdapter extends RecyclerView.Adapter {
         MyViewHolder mvh = (MyViewHolder)viewHolder;
         Event temp = events.get(i);
         mvh.title.setText(temp.getInfo()); //set the data members here
-        mvh.date.setText(temp.getMonth() + "/" + temp.getDay()); //string concat, just tell Android Studio to be quiet
+        mvh.type.setText(temp.getType().getName());
     }
 
     public int getItemCount() {

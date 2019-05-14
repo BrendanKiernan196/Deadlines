@@ -74,6 +74,7 @@ public class EventBag implements Serializable {
         for (int i = 0; i < eventList.size(); i++) {
             if (eventList.get(i).getTitle().equalsIgnoreCase(title)) return false;
         }
+
         eventList.add(new Event(title, type, year, month, day, hours, minutes));
         return true;
     }
@@ -87,6 +88,7 @@ public class EventBag implements Serializable {
                 } else break;
             }
         }
+
         eventList.get(i).update(title, type, year, month, day, hours, minutes);
         return true;
     }

@@ -71,7 +71,7 @@ public class Event {
 
     //Information String for RecyclerView
     public String getInfo(){
-        return title + "\t" + type.getName() + "\t" + month + "/" + day + "/" + year + "\t" +
+        return title + "\t\t" + month + "/" + day + "/" + year + "\t\t" +
                 hours / 10 + "" + hours % 10 + ":" + minutes / 10 + "" + minutes % 10;
     }
 
